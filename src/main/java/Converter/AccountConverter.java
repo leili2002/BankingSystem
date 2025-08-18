@@ -1,34 +1,31 @@
 package Converter;
-import Repository.AccountEntity;
-import Logic.Account;
-import Repository.UserEntity;
+
+import Logic.AccountData;
+import Repository.AccountModel;
 
 import java.util.UUID;
 
 
 public class AccountConverter {
-        public static AccountEntity toEntity(Account account) {
-            return new AccountEntity(
-                    UUID.randomUUID(),     // generate a new UUID
-                    0,
-                    account.getName(),
-                    account.getLastName(),
-                    account.getType(),
-                    account.getbalance()
-            );
+    public static AccountModel toEntity(AccountData accountData) {
+        return new AccountModel(
+                UUID.randomUUID(),     // generate a new UUID
+                0,
+                accountData.getName(),
+                accountData.getLastName(),
+                accountData.getType(),
+                accountData.getBalance()
+        );
     }
 
 
-    public static AccountEntity idToEntity(int id) {
-        return new AccountEntity(null, id, null, null,null,null);
+    public static AccountModel idToEntity(int id) {
+        return new AccountModel(null, id, null, null, null, null);
     }
 
 
-
-
-
-    public static Account toDomain(AccountEntity entity) {
-        return new Account(
+    public static AccountData toDomain(AccountModel entity) {
+        return new AccountData(
                 entity.getUuid(),
                 entity.getId(),
                 entity.get_Name(),

@@ -1,8 +1,7 @@
 package Repository;
 
-import Converter.AccountConverter;
 import DataBaseConnection.DatabaseConnection;
-import Logic.*;
+import Logic.Interface.IAccountRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class AccountRepository {
+public class AccountRepository implements IAccountRepository {
     private Connection conn;
 
     public AccountRepository(Connection conn) {
@@ -26,7 +25,7 @@ public class AccountRepository {
     }
 
 
-    public int addaccount(AccountEntity entity) {
+    public int addAccount(AccountModel entity) {
         String sql = "INSERT INTO Accounts (serial, id, name, lastname,type,balance) VALUES (?, ?, ?, ?, ?, ?)";
         try (
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -45,7 +44,7 @@ public class AccountRepository {
         }
     }
 
-    public int removeAccount(AccountEntity entity) {
+    public int removeAccount(AccountModel entity) {
         int id = entity.getRepo_id();
         String sql = "DELETE FROM Accounts WHERE id = ?";
         try (
@@ -65,7 +64,7 @@ public class AccountRepository {
         }
     }
 
-    public int Withdraw(AccountEntity entity,int amount) {
+    public int withdraw(AccountModel entity, int amount) {
         int id_account=entity.getRepo_id();
         String selectSql = "SELECT balance FROM Accounts WHERE id = ?";
         String updateSql = "UPDATE Accounts SET balance = balance - ? WHERE id = ?";
@@ -103,7 +102,7 @@ public class AccountRepository {
 
     }
 
-    public int Deposit(AccountEntity entity, int amount) {
+    public int deposit(AccountModel entity, int amount) {
         int id_account=entity.getRepo_id();
         String selectSql = "SELECT balance FROM Accounts WHERE id = ?";
         String updateSql = "UPDATE Accounts SET balance = balance + ? WHERE id = ?";
@@ -132,7 +131,7 @@ public class AccountRepository {
         }
     }
 
-    public int Transfer(AccountEntity entity_src, AccountEntity entity_des, int amount) {
+    public int transfer(AccountModel entity_src, AccountModel entity_des, int amount) {
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
@@ -140,8 +139,8 @@ public class AccountRepository {
 
             AccountRepository accountRepo = new AccountRepository(conn);
 
-            int result1 = accountRepo.Withdraw(entity_src, amount);
-            int result2 = accountRepo.Deposit(entity_des, amount);
+            int result1 = accountRepo.withdraw(entity_src, amount);
+            int result2 = accountRepo.deposit(entity_des, amount);
 
             if (result1 == 1 && result2 == 1) {
                 conn.commit();
@@ -173,7 +172,7 @@ public class AccountRepository {
         }
     }
 
-    public float CheckBalance(AccountEntity entity) {
+    public float checkBalance(AccountModel entity) {
         int id_account=entity.getRepo_id();
         String sql = "select balance from Accounts where id=?";
         try (
@@ -194,19 +193,19 @@ public class AccountRepository {
     }
 
 
-    public   List<AccountEntity> PrintAccountById(UserEntity entity) {
+    public   List<AccountModel> printAccountById(UserModel entity) {
         int national_id=entity.getRepon_national_id();
         String sql = "SELECT a.* " +
                 "FROM Accounts a " +
                 "JOIN users_accounts ua ON a.id = ua.account_id\n" +
                 "JOIN Users u ON ua.user_id = u.id\n" +
                 "WHERE u.national_id = ?;\n";
-        List<AccountEntity> Account_list = new ArrayList<>();
+        List<AccountModel> Account_list = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, national_id);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Account_list.add(new AccountEntity(
+                    Account_list.add(new AccountModel(
                             UUID.fromString(rs.getString("serial")),
                             rs.getInt("id"),
                             rs.getString("name"),
@@ -224,15 +223,15 @@ public class AccountRepository {
     }
 
 
-    public   List<AccountEntity> PrintAllAccounts() {
+    public   List<AccountModel> printAllAccounts() {
         String sql = "SELECT a.* " +
                 "FROM Accounts a ";
 
-        List<AccountEntity> Account_list = new ArrayList<>();
+        List<AccountModel> Account_list = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Account_list.add(new AccountEntity(
+                    Account_list.add(new AccountModel(
                             UUID.fromString(rs.getString("serial")),
                             rs.getInt("id"),
                             rs.getString("name"),
@@ -252,7 +251,7 @@ public class AccountRepository {
 
 
 
-    public UserEntity PrintUserData(UserEntity entity) {
+    public UserModel printUserData(UserModel entity) {
         int id=entity.getRepon_national_id();
         String sql = "SELECT * FROM Users WHERE national_id= ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -260,7 +259,7 @@ public class AccountRepository {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new UserEntity(
+                return new UserModel(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("lastname"),
