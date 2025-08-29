@@ -1,4 +1,4 @@
-package Presentation;
+package Handler.Terminal;
 
 import Logic.AccountData;
 import Logic.BankingService;
