@@ -1,26 +1,26 @@
 package Logic.Interface;
 
-import Repository.AccountModel;
-import Repository.UserModel;
+import Logic.AccountData;
+import Logic.UserData;
 
 import java.util.List;
 
 public interface IAccountRepository {
-    int addAccount(AccountModel entity);
+    Exception addAccount(AccountData accountData);
 
-    int removeAccount(AccountModel entity);
+    int removeAccount(int accountID);
 
-    int withdraw(AccountModel entity, int amount);
+    int withdraw(int accountID, int amount);
 
-    int deposit(AccountModel entity, int amount);
+    int deposit(int accountID, int amount);
 
-    int transfer(AccountModel entity_src, AccountModel entity_des, int amount);
+    int transfer(int sourceAccount, int destinationAccountID, int amount);
 
-    float checkBalance(AccountModel entity);
+    float checkBalance(int accountID);
 
-    List<AccountModel> printAccountById(UserModel entity);
+    List<AccountData> getUserAccounts(int userNationalID);
 
-    List<AccountModel> printAllAccounts();
+    List<AccountData> getAllAccounts();
 
-    UserModel printUserData(UserModel entity);
+    UserData getUserData(int nationalID);
 }

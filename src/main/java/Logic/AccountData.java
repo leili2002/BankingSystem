@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class AccountData {
-    private  UUID serial;
-    private  int id;
-    private  String name;
-    private  String lastname;
-    private  String type;
+    private final UUID serial;
+    private final int id;
+    private final String name;
+    private final String lastname;
+    private final String type;
      private float balance;
-    ArrayList<TransactionData> transactionData = new ArrayList<>();
 
-    public AccountData(String serial, int id, String name, String lastname, String type, float balance) {
-        this.serial = UUID.randomUUID();
+    public AccountData(UUID serial, int id, String name, String lastname, String type, float balance) {
+        this.serial = serial;
         this.id = id;
         this.balance = balance;
         this.name = name;

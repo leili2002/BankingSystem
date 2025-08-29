@@ -1,16 +1,14 @@
-package Converter;
+package Repository.Converter;
 
 import Logic.AccountData;
 import Repository.AccountModel;
 
-import java.util.UUID;
-
 
 public class AccountConverter {
-    public static AccountModel toEntity(AccountData accountData) {
+    public AccountModel toModel(AccountData accountData) {
         return new AccountModel(
-                UUID.randomUUID(),     // generate a new UUID
-                0,
+               accountData.getSerial(),     // generate a new UUID
+                accountData.getId(),
                 accountData.getName(),
                 accountData.getLastName(),
                 accountData.getType(),
@@ -19,12 +17,8 @@ public class AccountConverter {
     }
 
 
-    public static AccountModel idToEntity(int id) {
-        return new AccountModel(null, id, null, null, null, null);
-    }
 
-
-    public static AccountData toDomain(AccountModel entity) {
+    public AccountData toData(AccountModel entity) {
         return new AccountData(
                 entity.getUuid(),
                 entity.getId(),

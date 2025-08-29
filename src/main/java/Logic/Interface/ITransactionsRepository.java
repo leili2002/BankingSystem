@@ -9,6 +9,4 @@ public interface ITransactionsRepository {
     int addTransaction(TransactionData transactionData);
 
     List<TransactionData> printTransactions(int id_account);
-
-    AccountData printAccountData(int id);
 }

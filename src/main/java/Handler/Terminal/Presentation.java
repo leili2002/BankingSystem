@@ -1,17 +1,13 @@
-package Presentation;
+package Handler.Terminal;
 
 import Logic.AccountData;
 import Logic.BankingService;
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginResult;
 import Logic.UserData;
 import Logic.AccountService;
-import Repository.AccountRepository;
-import Repository.UserRepository;
-
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
+import Logic.Dto.LoginResult;
 
 
 public class Presentation {
@@ -56,7 +52,7 @@ public class Presentation {
             }
             case 2 -> log_in();
 
-            case 3 -> log_in();
+            case 3 -> admin_log_in();
 
             default -> System.out.println("Invalid choice.");
         }
@@ -80,7 +76,7 @@ public class Presentation {
     }
 
 
-    public void log_in() {
+    public String log_in() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your national_id");
         int id = scanner.nextInt();
@@ -89,27 +85,28 @@ public class Presentation {
 
         LoginResult loginResult = bankingService.login(id, password);
         if (loginResult.isSuccess()) {
-            System.out.println("Login successful for userModel ID: " + loginResult.getNationalId());
-            menue(loginResult.getNationalId());
+          return   "Login successful for userModel ID: " + loginResult.getNationalId();
+           //menue(loginResult.getNationalId());
         } else {
-            System.out.println("Login failed.");
+          return "Login failed.";
         }
 
 
     }
 
-    public void admin_log_in() {
+    public String admin_log_in() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
         System.out.println("enter your password");
         String password = scanner.next();
-        AdminLoginResult adminLoginResult = BankingService.Admin_login(id, password);
+        BankingService bank=new BankingService();
+        AdminLoginResult adminLoginResult = bank.Admin_login(id, password);
         if (adminLoginResult.isSuccess()) {
-            System.out.println("Admin Login successful ");
-            admin_menue();
+             return "Admin Login successful ";
+          //  admin_menue();
         } else {
-            System.out.println("Login failed.");
+           return"Login failed.";
         }
 
 
@@ -130,7 +127,7 @@ public class Presentation {
 
             switch (menue_choice) {
                 case 1: {
-                    List<AccountData> account_Data_Entity_list = accountService.PrintAccountById(national_id);
+                    List<AccountData> account_Data_Entity_list = accountService.GetUserAccounts(national_id);
                     for (AccountData acc : account_Data_Entity_list) {
                         System.out.println("ID = " + acc.getId());
                         System.out.println("Name = " + acc.getName());
@@ -193,27 +190,27 @@ public class Presentation {
                     }
                 }
 
-                case 2: {
-                    System.out.println("Enter accountData type:");
-                    String type = scanner.next();
-                    String serial = UUID.randomUUID().toString();
-                    float balance = 0;
-                    AccountData new_accountData = new AccountData(
-                            serial,
-                            0, // auto-increment in DB
-                            userEntity.getName(),
-                            userEntity.getLastName(),
-                            type,
-                            balance
-                    );
-                    int result = accountService.addAccount(new_accountData);
-                    if (result == 1) {
-                        System.out.println("accountData added");
-                    } else {
-                        System.out.println("accountData didnt add");
-                    }
-                    break;
-                }
+//                case 2: {
+//                    System.out.println("Enter accountData type:");
+//                    String type = scanner.next();
+//                    String serial = UUID.randomUUID().toString();
+//                    float balance = 0;
+//                    AccountData new_accountData = new AccountData(
+//                            serial,
+//                            0, // auto-increment in DB
+//                            userEntity.getName(),
+//                            userEntity.getLastName(),
+//                            type,
+//                            balance
+//                    );
+//                    int result = accountService.addAccount(new_accountData);
+//                    if (result == 1) {
+//                        System.out.println("accountData added");
+//                    } else {
+//                        System.out.println("accountData didnt add");
+//                    }
+//                    break;
+//                }
                 case 3: {
                     System.out.println("Goodbye!");
                     return; // ✅ exit whole method
@@ -245,7 +242,7 @@ public class Presentation {
                     }
                 case 2:
 
-                    List<AccountData> accountDataList = accountService.PrintAllAccounts();
+                    List<AccountData> accountDataList = accountService.GetAllAccounts();
 
                     for (AccountData accountData : accountDataList) {
                         System.out.println(" name: " + accountData.getName() + "last name= " +
@@ -268,5 +265,6 @@ public class Presentation {
         }
     }
 
-
 }
+
+

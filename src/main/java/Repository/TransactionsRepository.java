@@ -62,29 +62,6 @@ public class TransactionsRepository implements ITransactionsRepository {
     }
 
 
-    public AccountData printAccountData(int id) {
-        String sql = "SELECT * FROM Accounts WHERE id= ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new AccountData(
-                        rs.getString("serials"),
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("lastname"),
-                        rs.getString("type"),
-                        rs.getFloat("balance")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
 }
 
 

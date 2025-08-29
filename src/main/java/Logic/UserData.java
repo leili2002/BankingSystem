@@ -2,10 +2,10 @@ package Logic;
 
 
 public class UserData {
-    private int id;
-    private String name;
-    private String lastname;
-    private String password;
+    private final int id;
+    private final String name;
+    private final String lastname;
+    private final String password;
 
 
     public UserData(int id, String name, String lastname, String password) {
@@ -13,9 +13,6 @@ public class UserData {
         this.name = name;
         this.lastname = lastname;
         this.password = password;
-    }
-
-    public UserData() {
     }
 
 

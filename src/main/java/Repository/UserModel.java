@@ -8,6 +8,10 @@ public class UserModel {
     private String password;
 
     public UserModel(int id, String name, String lastName, String pass) {
+this .Repon_national_id=id;
+this.name=name;
+this.lastname=lastName;
+this.password=pass;
     }
 
     public int getRepon_national_id() {

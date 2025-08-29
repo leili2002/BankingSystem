@@ -3,16 +3,22 @@ package Repository;
 import java.util.UUID;
 
 public class AccountModel {
-    private  UUID serial;
-    private  int Repo_id;
-    private  String name;
-    private  String lastname;
-    private  String type;
+    private UUID serial;
+    private int Repo_id;
+    private String name;
+    private String lastname;
+    private String type;
     private float balance;
 
     public AccountModel(UUID serial, int Repo_id, String name, String lastname, String type, Float balance) {
-
+        this.serial = serial;
+        this.Repo_id = Repo_id;
+        this.name = name;
+        this.lastname = lastname;
+        this.type = type;
+        this.balance = balance;
     }
+
     public int getRepo_id() {
         return Repo_id;
     }
@@ -57,7 +63,7 @@ public class AccountModel {
         return serial;
     }
 
-    public Object getId() {
+    public int getId() {
         return getRepo_id();
     }
 }

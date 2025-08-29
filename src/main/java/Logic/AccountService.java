@@ -1,12 +1,11 @@
 package Logic;
 
-import Converter.AccountConverter;
-import Converter.UserConverter;
+import Repository.Converter.AccountConverter;
 import Logic.Interface.IAccountRepository;
 import Repository.AccountModel;
-import Repository.UserModel;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AccountService {
 
@@ -19,57 +18,51 @@ public class AccountService {
     }
 
 
-    public int addAccount(AccountData accountData) {
-
-        AccountModel entity = AccountConverter.toEntity(accountData);
-        return iAccountRepository.addAccount(entity);
+    public Exception addAccount(AccountData accountData) {
+        return iAccountRepository.addAccount(accountData);
     }
 
-    public int removeAccount(int id_account) {
-        AccountModel entity = AccountConverter.idToEntity(id_account);
-        return iAccountRepository.removeAccount(entity);
+    public int removeAccount(int accountID) {
+        return iAccountRepository.removeAccount(accountID);
     }
 
-    public int Withdraw(int id_account, int amount) {
-        AccountModel entity = AccountConverter.idToEntity(id_account);
-        return iAccountRepository.withdraw(entity, amount);
+    public int Withdraw(int accountID, int amount) {
+        return iAccountRepository.withdraw(accountID, amount);
     }
 
-    public int Deposit(int id_account, int amount) {
-        AccountModel entity = AccountConverter.idToEntity(id_account);
-        return iAccountRepository.deposit(entity, amount);
+    public int Deposit(int accountID, int amount) {
+        return iAccountRepository.deposit(accountID, amount);
     }
 
-    public int Transfer(int Src_Id, int Des_Id, int amount) {
-        AccountModel entity_src = AccountConverter.idToEntity(Src_Id);
-        AccountModel entity_des = AccountConverter.idToEntity(Des_Id);
-        return iAccountRepository.transfer(entity_src, entity_des, amount);
+    public int Transfer(int sourceAccountID, int destinationAccountID, int amount) {
+        return iAccountRepository.transfer(sourceAccountID, destinationAccountID, amount);
     }
 
-    public float CheckBalance(int id_account) {
-        AccountModel entity = AccountConverter.idToEntity(id_account);
-        return iAccountRepository.checkBalance(entity);
+    public float CheckBalance(int accountID) {
+        return iAccountRepository.checkBalance(accountID);
     }
 
-    public List<AccountData> PrintAccountById(int national_id) {
-        UserModel entity = UserConverter.idToEntity(national_id);
-        List<AccountModel> entities = iAccountRepository.printAccountById(entity);
-        return entities.stream()
-                .map(AccountConverter::toDomain)
-                .toList();
+    public List<AccountData> GetUserAccounts(int userNationalID) {
+        return iAccountRepository.getUserAccounts(userNationalID);
+
     }
 
-    public List<AccountData> PrintAllAccounts() {
-        List<AccountModel> entities = iAccountRepository.printAllAccounts();
-        return entities.stream()
-                .map(AccountConverter::toDomain)
-                .toList();
+    public List<AccountData> GetAllAccounts() {
+        return iAccountRepository.getAllAccounts();
     }
 
-    UserData PrintUsertData(int national_id) {
-        UserModel entity = UserConverter.idToEntity(national_id);
-        UserModel userModel = iAccountRepository.printUserData(entity);
-        return UserConverter.toEntity(userModel);
+   public Exception CreateUserAccount(int nationalId,String accountType) {
+        UserData userData = iAccountRepository.getUserData(nationalId);
+       int balance = 0;
+       AccountData newAccount = new AccountData(
+               UUID.randomUUID(),          // UUID
+               0,               // id (auto, so can be 0 or ignored if constructor handles it)
+               userData.getName(),
+               userData.getLastName(),
+               accountType,
+               balance
+       );
 
+       return this.addAccount(newAccount);
     }
 }

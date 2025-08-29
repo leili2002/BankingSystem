@@ -1,23 +1,24 @@
 package Repository;
 
 import DataBaseConnection.DatabaseConnection;
-import Logic.Interface.IUserRepository;
+//import Logic.Interface.IUserRepository;
+import Logic.Interface.IAccountRepository;
 import Logic.UserData;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepository implements IUserRepository {
+public class UserRepository {
 
-    public int addUser(UserModel entity) {
-        String sql = "INSERT INTO Users (national_id, name, lastname, password) VALUES (?, ?, ?, ?)";
+    public int addUser(UserData userData) {
+        String sql = "INSERT INTO Users (national_id,name , lastname, password) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, entity.getRepon_national_id());
-            stmt.setString(2, entity.get_Name());
-            stmt.setString(3, entity.getLastname());
-            stmt.setString(4, entity.getPassword());
+            stmt.setInt(1, userData.getId());
+            stmt.setString(2, userData.getName());
+            stmt.setString(3, userData.getLastName());
+            stmt.setString(4, userData.getPass());
             stmt.executeUpdate();
             return 1;
             // System.out.println("✅ User added to database.");
