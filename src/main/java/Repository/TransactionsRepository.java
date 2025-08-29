@@ -2,6 +2,7 @@ package Repository;
 
 import DataBaseConnection.DatabaseConnection;
 import Logic.*;
+import Logic.Interface.ITransactionsRepository;
 
 import java.sql.*;
 import java.sql.Timestamp;
@@ -13,14 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionsRepository {
-    public static int AddTransaction(Transaction transaction) {
+public class TransactionsRepository implements ITransactionsRepository {
+    public int addTransaction(TransactionData transactionData) {
         String sql = "INSERT INTO Transactions (amount, date) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, transaction.getAmount());
-            Timestamp timestamp = Timestamp.valueOf(transaction.getdate());
+            stmt.setInt(1, transactionData.getAmount());
+            Timestamp timestamp = Timestamp.valueOf(transactionData.getDate());
             stmt.setTimestamp(2, timestamp);
 
             stmt.executeUpdate();
@@ -32,8 +33,8 @@ public class TransactionsRepository {
         }
     }
 
-    public static List<Transaction> printTransactions(int id_account) {
-        List<Transaction> transactionList = new ArrayList<>();
+    public List<TransactionData> printTransactions(int id_account) {
+        List<TransactionData> transactionDataList = new ArrayList<>();
 
         String sql = "SELECT amount, date FROM Transactions WHERE account_id = ?";
 
@@ -48,8 +49,8 @@ public class TransactionsRepository {
                     Timestamp timestamp = rs.getTimestamp("date");
                     LocalDateTime date = timestamp.toLocalDateTime();
 
-                    Transaction transaction = new Transaction(amount, date);
-                    transactionList.add(transaction);
+                    TransactionData transactionData = new TransactionData(amount, date);
+                    transactionDataList.add(transactionData);
                 }
             }
 
@@ -57,30 +58,7 @@ public class TransactionsRepository {
             e.printStackTrace();
         }
 
-        return transactionList;
-    }
-
-
-    public Account printAccountData(int id) {
-        String sql = "SELECT * FROM Accounts WHERE id= ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Account(
-                        rs.getString("serials"),
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("lastname"),
-                        rs.getString("type"),
-                        rs.getFloat("balance")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return transactionDataList;
     }
 
 

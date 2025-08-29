@@ -1,33 +1,40 @@
 package Presentation;
 
-import Logic.Account;
-import Logic.BankingSystem;
+import Logic.AccountData;
+import Logic.BankingService;
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginResult;
-import Logic.User;
-
+import Logic.UserData;
+import Logic.AccountService;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
+import Logic.Dto.LoginResult;
 
 
 public class Presentation {
-    public static void presentation() {
-        HomeMenue.home_menu();
-        Entrance.enterence();
-    }
-}
+    private final AccountService accountService;
+    private final BankingService bankingService;
 
-class HomeMenue {
-    public static void home_menu() {
+
+    public Presentation(AccountService accountService, BankingService bankingService) {
+        this.accountService = accountService;
+        this.bankingService = bankingService;
+    }
+
+
+    public void presentation() {
+        home_menu();
+        enterence();
+    }
+
+
+    public void home_menu() {
         System.out.println("*****    your welcome to the bank site*   ****");
         System.out.println("         ______________________________       ");
 
     }
-}
 
-class Entrance {
-    public static void enterence() {
+
+    public void enterence() {
         Scanner scaneer = new Scanner(System.in);
         System.out.println("1. Sign Up");
         System.out.println("2. Log In");
@@ -36,24 +43,23 @@ class Entrance {
 
         switch (Enternce_choise) {
             case 1 -> {
-                int result_sighnUp = SignUp.Sign_Up();
+                int result_sighnUp = Sign_Up();
                 if (result_sighnUp == 1) {
                     System.out.println("Sign-up successful");
                 } else {
                     System.out.println("Sign-up unsuccessful");
                 }
             }
-            case 2 -> LogIn.log_in();
+            case 2 -> log_in();
 
-            case 3 -> Admin_LogIn.log_in();
+            case 3 -> admin_log_in();
 
             default -> System.out.println("Invalid choice.");
         }
     }
-}
 
-class SignUp {
-    public static int Sign_Up() {
+
+    public int Sign_Up() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
@@ -63,79 +69,74 @@ class SignUp {
         String last_name = scanner.next();
         System.out.println("enter your password");
         String password = scanner.next();
-        User new_user = new User(id, name, last_name, password);
-        BankingSystem bankSystem = new BankingSystem();
-        Entrance.enterence();
-        return bankSystem.register(new_user);
+        UserData new_userData = new UserData(id, name, last_name, password);
+        enterence();
+        return bankingService.register(new_userData);
 
     }
-}
 
-class LogIn {
-    public static void log_in() {
+
+    public String log_in() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your national_id");
         int id = scanner.nextInt();
         System.out.println("enter your password");
         String password = scanner.next();
-        LoginResult loginResult = BankingSystem.login(id, password);
+
+        LoginResult loginResult = bankingService.login(id, password);
         if (loginResult.isSuccess()) {
-            System.out.println("Login successful for user ID: " + loginResult.getNationalId());
-            user_Menu.menue(loginResult.getNationalId());
+          return   "Login successful for userModel ID: " + loginResult.getNationalId();
+           //menue(loginResult.getNationalId());
         } else {
-            System.out.println("Login failed.");
+          return "Login failed.";
         }
 
 
     }
-}
 
-class Admin_LogIn {
-    public static void log_in() {
+    public String admin_log_in() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
         System.out.println("enter your password");
         String password = scanner.next();
-        AdminLoginResult adminLoginResult = BankingSystem.Admin_login(id, password);
+        BankingService bank=new BankingService();
+        AdminLoginResult adminLoginResult = bank.Admin_login(id, password);
         if (adminLoginResult.isSuccess()) {
-            System.out.println("Admin Login successful ");
-            Admin_menue.admin_menue();
+             return "Admin Login successful ";
+          //  admin_menue();
         } else {
-            System.out.println("Login failed.");
+           return"Login failed.";
         }
 
 
     }
-}
 
 
-class user_Menu {
-    public static void menue(int national_id) {
-        User user = new User();
+    public void menue(int national_id) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("""
                     Menu:
                     1. Existing accounts
-                    2. Add new account
+                    2. Add new accountData
                     3. Log out""");
 
             int menue_choice = scanner.nextInt();
 
             switch (menue_choice) {
                 case 1: {
-                    List<Account> account_list = user.PrintAccountById(national_id);
-                    for (Account acc : account_list) {
-                        System.out.println("ID = " + acc.getid());
+                    List<AccountData> account_Data_Entity_list = accountService.GetUserAccounts(national_id);
+                    for (AccountData acc : account_Data_Entity_list) {
+                        System.out.println("ID = " + acc.getId());
                         System.out.println("Name = " + acc.getName());
                         System.out.println("Last name = " + acc.getLastName());
                         System.out.println("Type = " + acc.getType());
-                        System.out.println("Balance = " + acc.getbalance());
+                        System.out.println("Balance = " + acc.getBalance());
                         System.out.println("------------");
                     }
-                    System.out.println("Enter account ID to manage:");
+                    System.out.println("Enter accountData ID to manage:");
                     int account_id = scanner.nextInt();
                     while (true) {
                         System.out.println(
@@ -152,7 +153,7 @@ class user_Menu {
                             case 1 -> {
                                 System.out.println("Enter the amount:");
                                 int withdraw_amount = scanner.nextInt();
-                                int withdraw_result = user.Withdraw(account_id, withdraw_amount);
+                                int withdraw_result = accountService.Withdraw(account_id, withdraw_amount);
                                 switch (withdraw_result) {
                                     case 1 -> System.out.println("✅ Withdrawal successful");
                                     case 2 -> System.out.println("❌ Insufficient funds.");
@@ -162,24 +163,24 @@ class user_Menu {
                             case 2 -> {
                                 System.out.println("Enter the amount:");
                                 int deposit_amount = scanner.nextInt();
-                                int deposit_result = user.Deposit(account_id, deposit_amount);
+                                int deposit_result = accountService.Deposit(account_id, deposit_amount);
                                 switch (deposit_result) {
                                     case 1 -> System.out.println("✅ Deposit successful");
                                     case 2 -> System.out.println("❌ Account not found.");
                                 }
                             }
                             case 3 -> {
-                                System.out.println("Enter the amount and target account ID:");
+                                System.out.println("Enter the amount and target accountData ID:");
                                 int transfer_amount = scanner.nextInt();
                                 int transfer_account = scanner.nextInt();
-                                int transfer_result = user.Transfer(account_id, transfer_account, transfer_amount);
+                                int transfer_result = accountService.Transfer(account_id, transfer_account, transfer_amount);
                                 switch (transfer_result) {
-                                    case 1 -> System.out.println("✅ Transfer to account ID " + transfer_account + " successful");
+                                    case 1 -> System.out.println("✅ Transfer to accountData ID " + transfer_account + " successful");
                                     case 2 -> System.out.println("❌ Transfer unsuccessful");
                                 }
                             }
                             case 4 -> {
-                                float balance_result = user.CheckBalance(account_id);
+                                float balance_result = accountService.CheckBalance(account_id);
                                 System.out.println("Balance = " + balance_result);
                             }
                             case 5 -> System.out.println("Returning to main menu...");
@@ -189,26 +190,27 @@ class user_Menu {
                     }
                 }
 
-                case 2: {
-                    System.out.println("Enter account type:");
-                    String type = scanner.next();
-                    String serial = UUID.randomUUID().toString();
-                    float balance = 0;
-                    Account new_account = new Account(
-                            serial,
-                            0, // auto-increment in DB
-                            user.getName(),
-                            user.getLastName(),
-                            type,
-                            balance
-                    );
-                    int result =user.addAccount(new_account);
-                    if(result==1){
-                    System.out.println("account added");}
-                    else {
-                    System.out.println("account didnt add");}
-                    break;
-                }
+//                case 2: {
+//                    System.out.println("Enter accountData type:");
+//                    String type = scanner.next();
+//                    String serial = UUID.randomUUID().toString();
+//                    float balance = 0;
+//                    AccountData new_accountData = new AccountData(
+//                            serial,
+//                            0, // auto-increment in DB
+//                            userEntity.getName(),
+//                            userEntity.getLastName(),
+//                            type,
+//                            balance
+//                    );
+//                    int result = accountService.addAccount(new_accountData);
+//                    if (result == 1) {
+//                        System.out.println("accountData added");
+//                    } else {
+//                        System.out.println("accountData didnt add");
+//                    }
+//                    break;
+//                }
                 case 3: {
                     System.out.println("Goodbye!");
                     return; // ✅ exit whole method
@@ -219,38 +221,37 @@ class user_Menu {
             }
         }
     }
-}
 
-class Admin_menue {
-    public static void admin_menue() {
+
+    public void admin_menue() {
         Scanner scanner = new Scanner(System.in);
-        BankingSystem bankingSystem = new BankingSystem();
+
         while (true) {
             System.out.println(
                     """
                             1.display users
                             2.display accounts
-                            3.remove user
+                            3.remove userModel
                             4.Exit""");
             int Admin_result = scanner.nextInt();
             switch (Admin_result) {
                 case 1:
-                    List<User> UsersList = bankingSystem.displayAllUsers();
-                    for (User users : UsersList) {
+                    List<UserData> usersList = bankingService.displayAllUsers();
+                    for (UserData users : usersList) {
                         System.out.println(" name: " + users.getName() + "last name= " + users.getLastName() + "id= " + users.getId());
                     }
                 case 2:
 
-                    List<Account> accountList = User.PrintAllAccounts();
+                    List<AccountData> accountDataList = accountService.GetAllAccounts();
 
-                    for (Account account : accountList) {
-                        System.out.println(" name: " + account.getName() + "last name= " +
-                                "" + account.getLastName() + "type= " + account.getType() + "balance= " + account.getbalance());
+                    for (AccountData accountData : accountDataList) {
+                        System.out.println(" name: " + accountData.getName() + "last name= " +
+                                "" + accountData.getLastName() + "type= " + accountData.getType() + "balance= " + accountData.getBalance());
                     }
                 case 3:
-                    System.out.println("enter the user national id");
+                    System.out.println("enter the userModel national id");
                     int national_id = scanner.nextInt();
-                    int result = bankingSystem.removeUser(national_id);
+                    int result = bankingService.removeUser(national_id);
                     if (result == 1) {
                         System.out.println("✅ User removed from database.");
                     } else {
@@ -263,4 +264,7 @@ class Admin_menue {
             }
         }
     }
+
 }
+
+

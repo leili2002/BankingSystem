@@ -1,7 +1,9 @@
 package Repository;
 
 import DataBaseConnection.DatabaseConnection;
-import Logic.*;
+//import Logic.Interface.IUserRepository;
+import Logic.Interface.IAccountRepository;
+import Logic.UserData;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,14 +11,14 @@ import java.util.List;
 
 public class UserRepository {
 
-    public int addUser(UserEntity entity) {
-        String sql = "INSERT INTO Users (national_id, name, lastname, password) VALUES (?, ?, ?, ?)";
+    public int addUser(UserData userData) {
+        String sql = "INSERT INTO Users (national_id,name , lastname, password) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, entity.getRepon_national_id());
-            stmt.setString(2, entity.get_Name());
-            stmt.setString(3, entity.getLastname());
-            stmt.setString(4, entity.getPassword());
+            stmt.setInt(1, userData.getId());
+            stmt.setString(2, userData.getName());
+            stmt.setString(3, userData.getLastName());
+            stmt.setString(4, userData.getPass());
             stmt.executeUpdate();
             return 1;
             // System.out.println("✅ User added to database.");
@@ -26,8 +28,8 @@ public class UserRepository {
         }
     }
 
-    public int removeUser(UserEntity entity) {
-        int id = entity.getRepon_national_id();
+    public int removeUser(UserModel model) {
+        int id = model.getRepon_national_id();
         String sql = "DELETE FROM Users WHERE national_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -45,14 +47,14 @@ public class UserRepository {
 
     }
 
-    public static User getUserById(int id) {
+    public UserData getUserById(int id) {
         String sql = "SELECT * FROM Users WHERE national_id= ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new User(
+                return new UserData(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("lastname"),
@@ -65,15 +67,15 @@ public class UserRepository {
         return null;
     }
 
-    public List<UserEntity> getAllUsers() {
-        List<UserEntity> userList = new ArrayList<>();
+    public List<UserModel> getAllUsers() {
+        List<UserModel> userModelList = new ArrayList<>();
         String sql = "SELECT * FROM Users";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                userList.add(new UserEntity(
+                userModelList.add(new UserModel(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("lastname"),
@@ -83,6 +85,6 @@ public class UserRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return userList;
+        return userModelList;
     }
 }
