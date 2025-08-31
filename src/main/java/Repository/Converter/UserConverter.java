@@ -7,7 +7,7 @@ import Repository.UserModel;
 public class UserConverter {
     public UserModel toModel(UserData userData) {
         return new UserModel(
-                userData.getId(),
+                userData.getNational_id(),
                 userData.getName(),
                 userData.getLastName(),
                 userData.getPass()

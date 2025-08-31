@@ -3,11 +3,12 @@ package Handler.Terminal;
 import Logic.AccountData;
 import Logic.BankingService;
 import Logic.Dto.AdminLoginResult;
+import Logic.Dto.LoginFailedException;
 import Logic.UserData;
 import Logic.AccountService;
 import java.util.List;
 import java.util.Scanner;
-import Logic.Dto.LoginResult;
+import Logic.Dto.AdminLogginResult;
 
 
 public class Presentation {
@@ -21,7 +22,7 @@ public class Presentation {
     }
 
 
-    public void presentation() {
+    public void presentation() throws LoginFailedException {
         home_menu();
         enterence();
     }
@@ -34,7 +35,7 @@ public class Presentation {
     }
 
 
-    public void enterence() {
+    public void enterence() throws LoginFailedException {
         Scanner scaneer = new Scanner(System.in);
         System.out.println("1. Sign Up");
         System.out.println("2. Log In");
@@ -59,7 +60,7 @@ public class Presentation {
     }
 
 
-    public int Sign_Up() {
+    public int Sign_Up() throws LoginFailedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
@@ -76,14 +77,14 @@ public class Presentation {
     }
 
 
-    public String log_in() {
+    public String log_in() throws LoginFailedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your national_id");
         int id = scanner.nextInt();
         System.out.println("enter your password");
         String password = scanner.next();
 
-        LoginResult loginResult = bankingService.login(id, password);
+        AdminLogginResult loginResult = bankingService.login(id, password);
         if (loginResult.isSuccess()) {
           return   "Login successful for userModel ID: " + loginResult.getNationalId();
            //menue(loginResult.getNationalId());
@@ -94,7 +95,7 @@ public class Presentation {
 
     }
 
-    public String admin_log_in() {
+    public String admin_log_in() throws LoginFailedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
@@ -238,7 +239,7 @@ public class Presentation {
                 case 1:
                     List<UserData> usersList = bankingService.displayAllUsers();
                     for (UserData users : usersList) {
-                        System.out.println(" name: " + users.getName() + "last name= " + users.getLastName() + "id= " + users.getId());
+                        System.out.println(" name: " + users.getName() + "last name= " + users.getLastName() + "id= " + users.getNational_id());
                     }
                 case 2:
 

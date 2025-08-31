@@ -1,7 +1,8 @@
 package Logic;
 
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginResult;
+import Logic.Dto.LoginFailedException;
+import Logic.Dto.AdminLogginResult;
 import Repository.Converter.UserConverter;
 import Repository.UserRepository;
 import Repository.*;
@@ -21,15 +22,22 @@ public class BankingService {
        return repo.addUser(newUserData);
     }
 
-    public  LoginResult login(int id, String password) {
-        UserData userData = repo.getUserById(id);
+    public AdminLogginResult login(int national_id, String password)throws LoginFailedException {
+        UserData userData = repo.getUserById(national_id);
         boolean success = userData != null && (userData.getPass() == null ? password == null : userData.getPass().equals(password));
-        return new LoginResult(id, success);
+        if (!success) {
+            throw new LoginFailedException("Invalid national ID or password");
+        }
+        String name=userData.getName();
+        return new AdminLogginResult(national_id, true,name);
     }
 
-    public   AdminLoginResult Admin_login(int id, String password) {
-        boolean success = (id == 12345) && "admin system".equals(password);
-        return new AdminLoginResult(id, success);
+    public   AdminLoginResult Admin_login(int id, String password)  throws LoginFailedException{
+        boolean success = (id == 12345) && "adminsystem".equals(password);
+        if (!success) {
+            throw new LoginFailedException("Invalid national ID or password");
+        }
+        return new AdminLoginResult(id, true);
     }
 
     public int removeUser(int id) {

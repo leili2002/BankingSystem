@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BankingSystem</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>BankingSystem</h1>
+
+  <!-- Main menu -->
+  <div id="main-menu">
+    <button onclick="showSignUp()">Sign Up</button>
+    <button onclick="showLogin()">Log In</button>
+    <button onclick="showAdmin()">Admin</button>
+  </div>
+
+  <!-- Sign Up form -->
+  <div id="signup-form" style="display:none;">
+    <h2>Sign Up</h2>
+    <input type="number" id="signup-id" placeholder="Enter ID"><br><br>
+    <input type="text" id="signup-name" placeholder="Enter Name"><br><br>
+    <input type="text" id="signup-lastname" placeholder="Enter Last Name"><br><br>
+    <input type="password" id="signup-password" placeholder="Enter Password"><br><br>
+    <button onclick="submitSignUp()">Submit</button>
+    <button onclick="backToMain()">Back</button>
+  </div>
+
+  <!-- Login form -->
+  <div id="login-form" style="display:none;">
+    <h2>Log In</h2>
+    <input type="number" id="login-id" placeholder="Enter ID"><br><br>
+    <input type="password" id="login-password" placeholder="Enter Password"><br><br>
+    <button onclick="submitLogin()">Submit</button>
+    <button onclick="backToMain()">Back</button>
+  </div>
+
+
+  <div id="dashboard" style="display:none;">
+    <h2 id="welcome-text">Welcome!</h2>
+    <button onclick="getAccounts()">Existing Accounts</button>
+    <button onclick="showAddAccount()">Add New Account</button>
+    <button onclick="logout()">Log Out</button>
+    <div id="dashboard-response"></div>
+  </div>
+
+
+  <div id="response-box">
+    <pre id="response"></pre>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  // function showSignUp() {
+  //   document.getElementById("signup-form").style.display = "block";
+  //   document.getElementById("login-form").style.display = "none";
+  //   document.getElementById("main-menu").style.display = "none";
+  //   document.getElementById("response").textContent = "";
+  // }
+
+  function showLogin() {
+    document.getElementById("signup-form").style.display = "none";
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("response").textContent = "";
+  }
+
+  // function backToMain() {
+  //   document.getElementById("signup-form").style.display = "none";
+  //   document.getElementById("login-form").style.display = "none";
+  //   document.getElementById("main-menu").style.display = "block";
+  //   document.getElementById("response").textContent = "";
+  // }
+</script>
+</body>
+</html>

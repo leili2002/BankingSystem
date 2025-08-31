@@ -5,7 +5,8 @@ package Handler.JavaFX;//package com.company;//package com.company;
 import Logic.AccountData;
 import Logic.AccountService;
 import Logic.BankingService;
-import Logic.Dto.LoginResult;
+import Logic.Dto.LoginFailedException;
+import Logic.Dto.AdminLogginResult;
 import Logic.UserData;
 import Repository.AccountRepository;
 import Repository.UserRepository;
@@ -133,12 +134,14 @@ public class BankApp extends Application {
             try {
                 int id = Integer.parseInt(idFieldLogin.getText());
                 String password = passwordFieldLogin.getText();
-                LoginResult loginResult = bankingService.login(id, password);
+                AdminLogginResult loginResult = bankingService.login(id, password);
                 if (loginResult.isSuccess()) {
                     primaryStage.setScene(createMainMenu(primaryStage, id));
                 } else resultLogin.setText("Login failed.");
             } catch (NumberFormatException ex) {
                 resultLogin.setText("ID must be a number!");
+            } catch (LoginFailedException ex) {
+                ex.printStackTrace();
             }
         });
 

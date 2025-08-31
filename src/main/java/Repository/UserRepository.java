@@ -2,7 +2,6 @@ package Repository;
 
 import DataBaseConnection.DatabaseConnection;
 //import Logic.Interface.IUserRepository;
-import Logic.Interface.IAccountRepository;
 import Logic.UserData;
 
 import java.sql.*;
@@ -15,7 +14,7 @@ public class UserRepository {
         String sql = "INSERT INTO Users (national_id,name , lastname, password) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userData.getId());
+            stmt.setInt(1, userData.getNational_id());
             stmt.setString(2, userData.getName());
             stmt.setString(3, userData.getLastName());
             stmt.setString(4, userData.getPass());
@@ -47,11 +46,11 @@ public class UserRepository {
 
     }
 
-    public UserData getUserById(int id) {
+    public UserData getUserById(int national_id) {
         String sql = "SELECT * FROM Users WHERE national_id= ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, national_id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new UserData(
