@@ -25,7 +25,7 @@ public class AccountConverter {
                 entity.get_Name(),
                 entity.getLastname(),
                 entity.gettype(),
-                entity.getbalance()   // match your method name here
+                entity.getbalance()   // match your method getName here
         );
     }
 

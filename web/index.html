@@ -36,16 +36,17 @@
     <button onclick="backToMain()">Back</button>
   </div>
 
-
+  <!-- Dashboard -->
   <div id="dashboard" style="display:none;">
     <h2 id="welcome-text">Welcome!</h2>
-    <button onclick="getAccounts()">Existing Accounts</button>
-    <button onclick="showAddAccount()">Add New Account</button>
-    <button onclick="logout()">Log Out</button>
+    <button id="get-accounts-btn" onclick="getAccounts()">Existing Accounts</button>
+    <button id="add-account-btn" onclick="showAddAccount()">Add New Account</button>
+    <button id="logout-btn" onclick="logout()">Log Out</button>
     <div id="dashboard-response"></div>
   </div>
 
 
+  <!-- Response area -->
   <div id="response-box">
     <pre id="response"></pre>
   </div>
@@ -53,12 +54,12 @@
 
 <script src="script.js"></script>
 <script>
-  // function showSignUp() {
-  //   document.getElementById("signup-form").style.display = "block";
-  //   document.getElementById("login-form").style.display = "none";
-  //   document.getElementById("main-menu").style.display = "none";
-  //   document.getElementById("response").textContent = "";
-  // }
+  function showSignUp() {
+    document.getElementById("signup-form").style.display = "block";
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("response").textContent = "";
+  }
 
   function showLogin() {
     document.getElementById("signup-form").style.display = "none";
@@ -66,13 +67,37 @@
     document.getElementById("main-menu").style.display = "none";
     document.getElementById("response").textContent = "";
   }
+  function showAdmin() {
+    document.getElementById("signup-form").style.display = "none";
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("response").textContent = "";
+  }
 
-  // function backToMain() {
-  //   document.getElementById("signup-form").style.display = "none";
-  //   document.getElementById("login-form").style.display = "none";
-  //   document.getElementById("main-menu").style.display = "block";
-  //   document.getElementById("response").textContent = "";
-  // }
+  function backToMain() {
+    document.getElementById("signup-form").style.display = "none";
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("main-menu").style.display = "block";
+    document.getElementById("response").textContent = "";
+  };
+  function showDashboard(username) {
+    // Hide login and signup forms
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("signup-form").style.display = "none";
+    document.getElementById("main-menu").style.display = "none";
+
+    // Show the dashboard
+    document.getElementById("dashboard").style.display = "block";
+
+    // Update welcome text
+    document.getElementById("welcome-text").textContent = `Welcome, ${username}!`;
+
+    // Clear any previous messages
+    document.getElementById("dashboard-response").textContent = "";
+    document.getElementById("response").textContent = "";
+  }
+
+
 </script>
 </body>
 </html>

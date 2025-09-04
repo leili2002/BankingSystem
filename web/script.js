@@ -24,14 +24,14 @@ async function submitSignUp() {
         document.getElementById("response").textContent = "❌ Please fill all fields.";
         return;
     }
-
+// make json to send server
     const payload = {
         national_id: parseInt(national_id),
         name: name,
         lastname: lastname,
         password: password
     };
-
+// send and get a response from server (response is  answer of server)
     try {
         const response = await fetch(API_BASE + "/signup", {
             method: "POST",
@@ -45,7 +45,9 @@ async function submitSignUp() {
         document.getElementById("response").textContent = "Error: " + error.message;
     }
 }
- // login function
+
+
+//login form
 async function submitLogin() {
     const national_id = parseInt(document.getElementById("login-id").value.trim(), 10);
     const password = document.getElementById("login-password").value.trim();
@@ -55,10 +57,7 @@ async function submitLogin() {
         return;
     }
 
-    const payload = {
-        national_id: national_id,
-        password: password
-    };
+    const payload = { national_id, password };
     console.log("Sending payload to server:", payload);
 
     try {
@@ -68,27 +67,78 @@ async function submitLogin() {
             body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-        console.log("Server response:", result);
-        console.log(result);
+        const contentType = response.headers.get("Content-Type") || "";
+        const data = contentType.includes("application/json")
+            ? await response.json()
+            : await response.text();
 
-        if (result.success) {
+        // Success based on HTTP status code
+        if (response.status === 200) {
+            // Server should return { token, name }
+            localStorage.setItem("jwt", data.token);
+            alert("Login successful!");
             // Hide login form, show dashboard
-            document.getElementById("login-form").style.display = "none";
-            document.getElementById("main-menu").style.display = "none";
-            document.getElementById("dashboard").style.display = "block";
 
+            // Clear login fields
+            document.getElementById("login-id").value = "";
+            document.getElementById("login-password").value = "";
+
+            // Show dashboard using your existing function
+            showDashboard(data.name);
             // Store user info
-            window.userId = result.national_id;
-            window.userName = result.name;
-
+            window.userName = data.name;
             // Update welcome message
-            document.getElementById("welcome-text").textContent = `Welcome, ${window.userName}!`;
+            // document.getElementById("welcome-text").textContent = `Welcome, ${window.userName}!`;
+
+        } else if (response.status === 400) {
+            document.getElementById("response").textContent = "❌ Bad request. Please check your input.";
+
+        } else if (response.status === 401) {
+            document.getElementById("response").textContent = "❌ Unauthorized. Wrong ID or password.";
+
+        } else {
+            document.getElementById("response").textContent = `❌ Login failed (HTTP ${response.status})`;
         }
-        else {
-            document.getElementById("response").textContent = "❌ Login failed!";
-        }
+
+        console.log("Server response:", data);
+
     } catch (error) {
-        document.getElementById("response").textContent = "Error: " + error.message;
+        document.getElementById("response").textContent = "Network error: " + error.message;
+        console.error("Login error:", error);
     }
 }
+
+// account menu
+//
+//     try {
+//         const token = localStorage.getItem("jwt");
+//         if (!token) {
+//             document.getElementById("dashboard-response").textContent = "❌ No token found. Please login first.";
+//             return;
+//         }
+//
+//         const response = await fetch("http://localhost:8080/account-menu", {
+//             method: "GET",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Authorization": "Bearer " + token
+//             }
+//         });
+//
+//         const contentType = response.headers.get("Content-Type") || "";
+//         const data = contentType.includes("application/json")
+//             ? await response.json()
+//             : await response.text();
+//
+//         if (response.status === 200) {
+//             document.getElementById("dashboard-response").textContent = `✅ Success: ${JSON.stringify(data)}`;
+//         } else if (response.status === 401) {
+//             document.getElementById("dashboard-response").textContent = "❌ Unauthorized. Token invalid or expired.";
+//         } else {
+//             document.getElementById("dashboard-response").textContent = `❌ Failed (HTTP ${response.status}): ${JSON.stringify(data)}`;
+//         }
+//     } catch (error) {
+//         document.getElementById("dashboard-response").textContent = "Network error: " + error.message;
+//         console.error(error);
+//     }
+// });

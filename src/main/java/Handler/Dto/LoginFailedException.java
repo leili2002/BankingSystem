@@ -1,4 +1,4 @@
-package Logic.Dto;
+package Handler.Dto;
 
 public class LoginFailedException extends Exception {
     public LoginFailedException(String message) {

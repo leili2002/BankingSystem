@@ -2,13 +2,14 @@ package Repository;
 
 import DataBaseConnection.DatabaseConnection;
 //import Logic.Interface.IUserRepository;
+import Logic.Interface.IUserRepository;
 import Logic.UserData;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepository {
+public class UserRepository implements IUserRepository {
 
     public int addUser(UserData userData) {
         String sql = "INSERT INTO Users (national_id,name , lastname, password) VALUES (?, ?, ?, ?)";
@@ -55,7 +56,7 @@ public class UserRepository {
             if (rs.next()) {
                 return new UserData(
                         rs.getInt("id"),
-                        rs.getString("name"),
+                        rs.getString("getName"),
                         rs.getString("lastname"),
                         rs.getString("password")
                 );
@@ -76,7 +77,7 @@ public class UserRepository {
             while (rs.next()) {
                 userModelList.add(new UserModel(
                         rs.getInt("id"),
-                        rs.getString("name"),
+                        rs.getString("getName"),
                         rs.getString("lastname"),
                         rs.getString("password")
                 ));

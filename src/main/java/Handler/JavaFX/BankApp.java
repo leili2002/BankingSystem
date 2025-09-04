@@ -1,30 +1,14 @@
-package Handler.JavaFX;//package com.company;//package com.company;
-//
-//
+package Handler.JavaFX;
 
 import Logic.AccountData;
 import Logic.AccountService;
 import Logic.BankingService;
-import Logic.Dto.LoginFailedException;
-import Logic.Dto.AdminLogginResult;
+import Handler.Dto.LoginFailedException;
+import Logic.Dto.LoginResult;
+import Logic.Interface.IUserRepository;
 import Logic.UserData;
 import Repository.AccountRepository;
 import Repository.UserRepository;
-//
-//
-//public class Main {
-//    public static void main(String[] args) {
-//        UserRepository userRepository = new UserRepository();
-//        AccountRepository accountRepository = new AccountRepository();
-//        BankingService bankingService = new BankingService(userRepository);
-//        AccountService accountService = new AccountService(accountRepository);
-//        Presentation presentation = new Presentation(accountService,bankingService);
-
-//
-//        presentation.presentation();
-//
-//    }
-//}
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -41,7 +25,8 @@ public class BankApp extends Application {
 
     private final UserRepository userRepository = new UserRepository();
     private final AccountRepository accountRepository = new AccountRepository();
-    private final BankingService bankingService = new BankingService();
+    private final IUserRepository iUserRepository = new UserRepository();
+    private final BankingService bankingService = new BankingService(iUserRepository);
     private final AccountService accountService = new AccountService(accountRepository);
 
     public static void main(String[] args) {
@@ -84,9 +69,9 @@ public class BankApp extends Application {
         VBox signUpLayout = new VBox(15);
         signUpLayout.setPadding(new Insets(30));
         TextField nameField = new TextField();
-        nameField.setPromptText("Enter your name");
+        nameField.setPromptText("Enter your getName");
         TextField lastNameField = new TextField();
-        lastNameField.setPromptText("Enter your last name");
+        lastNameField.setPromptText("Enter your last getName");
         TextField idFieldSignUp = new TextField();
         idFieldSignUp.setPromptText("Enter your national ID");
         PasswordField passwordFieldSignUp = new PasswordField();
@@ -134,7 +119,7 @@ public class BankApp extends Application {
             try {
                 int id = Integer.parseInt(idFieldLogin.getText());
                 String password = passwordFieldLogin.getText();
-                AdminLogginResult loginResult = bankingService.login(id, password);
+                LoginResult loginResult = bankingService.login(id, password);
                 if (loginResult.isSuccess()) {
                     primaryStage.setScene(createMainMenu(primaryStage, id));
                 } else resultLogin.setText("Login failed.");
@@ -279,11 +264,12 @@ public class BankApp extends Application {
             String type = typeField.getText();
             if (!type.isEmpty()) {
                 Exception creatAccountException = accountService.CreateUserAccount(userId, type);
-                if (creatAccountException==null) {
+                if (creatAccountException == null) {
                     result.setText("Account added successfully!");
                     typeField.clear();
+                } else {
+                    result.setText("Account added unsuccessfully!");
                 }
-                else { result.setText("Account added unsuccessfully!");}
             } else {
                 result.setText("Please enter account type!");
             }

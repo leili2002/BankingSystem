@@ -1,11 +1,13 @@
 package Handler.Http;
 
-import Logic.Dto.LoginFailedException;
-import Logic.Dto.LoginRequest;
+import Handler.Dto.LoginFailedException;
+import Handler.Dto.LoginServerOutput;
+import Logic.Dto.*;
+import Logic.Interface.IUserRepository;
+import Repository.UserRepository;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import Logic.BankingService;
-import Logic.Dto.AdminLogginResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +15,8 @@ import java.io.InputStream;
 public class LoginHandler implements Handler {
 
     private final Gson gson = new Gson();
-    private final BankingService bankingService = new BankingService();
+    private final IUserRepository iUserRepository = new UserRepository();
+    private final BankingService bankingService = new BankingService(iUserRepository);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -34,10 +37,11 @@ public class LoginHandler implements Handler {
             return;
         }
         try {
-            AdminLogginResult result = bankingService.login(loginRequest.national_id, loginRequest.password);
+            LoginResult result = bankingService.login(loginRequest.national_id,loginRequest.password);
+            LoginServerOutput ServerOutput = new LoginServerOutput(result.getName(), result.getAccessToken());
 
             // Convert result to JSON and send success response
-            String responseJson = gson.toJson(result);
+            String responseJson = gson.toJson(ServerOutput);
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, responseJson.getBytes().length);
             exchange.getResponseBody().write(responseJson.getBytes());

@@ -1,12 +1,13 @@
 package Handler.Http;
 
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginFailedException;
+import Handler.Dto.LoginFailedException;
 import Logic.Dto.LoginRequest;
+import Logic.Interface.IUserRepository;
+import Repository.UserRepository;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import Logic.BankingService;
-import Logic.Dto.AdminLogginResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,8 @@ import java.io.InputStream;
 public class AdminHandler implements Handler {
 
     private final Gson gson = new Gson();
-    private final BankingService bankingService = new BankingService();
+    private final IUserRepository iUserRepository = new UserRepository();
+    private final BankingService bankingService = new BankingService(iUserRepository);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

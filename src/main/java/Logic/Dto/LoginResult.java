@@ -2,10 +2,11 @@ package Logic.Dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public record AdminLogginResult(
+public record LoginResult(
         @SerializedName("national_id") int nationalId,
         boolean success,
-        String name
+        String getName,
+        String accessToken
 ) {
     public int getNationalId() {
         return nationalId;
@@ -14,8 +15,13 @@ public record AdminLogginResult(
     public boolean isSuccess() {
         return success;
     }
-    public String name() {
-        return name;
+
+    public String getName() {
+        return getName;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 }
 

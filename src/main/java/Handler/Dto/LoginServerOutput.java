@@ -1,4 +1,4 @@
-package Logic.Dto;
+package Handler.Dto;
 
 public class LoginServerOutput {
     public String name;

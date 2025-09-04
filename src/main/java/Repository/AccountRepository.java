@@ -211,7 +211,7 @@ public class AccountRepository implements IAccountRepository {
                     Account_list.add(new AccountModel(
                             UUID.fromString(rs.getString("serial")),
                             rs.getInt("id"),
-                            rs.getString("name"),
+                            rs.getString("getName"),
                             rs.getString("lastname"),
                             rs.getString("type"),
                             rs.getFloat("balance")
@@ -242,7 +242,7 @@ public class AccountRepository implements IAccountRepository {
                     accountList.add(new AccountModel(
                             UUID.fromString(rs.getString("serial")),
                             rs.getInt("id"),
-                            rs.getString("name"),
+                            rs.getString("getName"),
                             rs.getString("lastname"),
                             rs.getString("type"),
                             rs.getFloat("balance")
@@ -279,7 +279,7 @@ public class AccountRepository implements IAccountRepository {
             if (rs.next()) {
                 UserModel fetchedUserModel= new UserModel(
                         rs.getInt("id"),
-                        rs.getString("name"),
+                        rs.getString("getName"),
                         rs.getString("lastname"),
                         rs.getString("password")
                 );

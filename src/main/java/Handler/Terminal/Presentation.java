@@ -3,12 +3,14 @@ package Handler.Terminal;
 import Logic.AccountData;
 import Logic.BankingService;
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginFailedException;
+import Handler.Dto.LoginFailedException;
 import Logic.UserData;
 import Logic.AccountService;
+
 import java.util.List;
 import java.util.Scanner;
-import Logic.Dto.AdminLogginResult;
+
+import Logic.Dto.LoginResult;
 
 
 public class Presentation {
@@ -64,9 +66,9 @@ public class Presentation {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter your id");
         int id = scanner.nextInt();
-        System.out.println("enter your name");
+        System.out.println("enter your getName");
         String name = scanner.next();
-        System.out.println("enter your last name");
+        System.out.println("enter your last getName");
         String last_name = scanner.next();
         System.out.println("enter your password");
         String password = scanner.next();
@@ -84,12 +86,12 @@ public class Presentation {
         System.out.println("enter your password");
         String password = scanner.next();
 
-        AdminLogginResult loginResult = bankingService.login(id, password);
+        LoginResult loginResult = bankingService.login(id, password);
         if (loginResult.isSuccess()) {
-          return   "Login successful for userModel ID: " + loginResult.getNationalId();
-           //menue(loginResult.getNationalId());
+            return "Login successful for userModel ID: " + loginResult.getNationalId();
+            //menue(loginResult.getNationalId());
         } else {
-          return "Login failed.";
+            return "Login failed.";
         }
 
 
@@ -101,13 +103,12 @@ public class Presentation {
         int id = scanner.nextInt();
         System.out.println("enter your password");
         String password = scanner.next();
-        BankingService bank=new BankingService();
-        AdminLoginResult adminLoginResult = bank.Admin_login(id, password);
+        AdminLoginResult adminLoginResult = bankingService.Admin_login(id, password);
         if (adminLoginResult.isSuccess()) {
-             return "Admin Login successful ";
-          //  admin_menue();
+            return "Admin Login successful ";
+            //  admin_menue();
         } else {
-           return"Login failed.";
+            return "Login failed.";
         }
 
 
@@ -132,7 +133,7 @@ public class Presentation {
                     for (AccountData acc : account_Data_Entity_list) {
                         System.out.println("ID = " + acc.getId());
                         System.out.println("Name = " + acc.getName());
-                        System.out.println("Last name = " + acc.getLastName());
+                        System.out.println("Last getName = " + acc.getLastName());
                         System.out.println("Type = " + acc.getType());
                         System.out.println("Balance = " + acc.getBalance());
                         System.out.println("------------");
@@ -239,14 +240,14 @@ public class Presentation {
                 case 1:
                     List<UserData> usersList = bankingService.displayAllUsers();
                     for (UserData users : usersList) {
-                        System.out.println(" name: " + users.getName() + "last name= " + users.getLastName() + "id= " + users.getNational_id());
+                        System.out.println(" getName: " + users.getName() + "last getName= " + users.getLastName() + "id= " + users.getNational_id());
                     }
                 case 2:
 
                     List<AccountData> accountDataList = accountService.GetAllAccounts();
 
                     for (AccountData accountData : accountDataList) {
-                        System.out.println(" name: " + accountData.getName() + "last name= " +
+                        System.out.println(" getName: " + accountData.getName() + "last getName= " +
                                 "" + accountData.getLastName() + "type= " + accountData.getType() + "balance= " + accountData.getBalance());
                     }
                 case 3:

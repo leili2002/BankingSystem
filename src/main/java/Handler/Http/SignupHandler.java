@@ -1,5 +1,7 @@
 package Handler.Http;
 
+import Logic.Interface.IUserRepository;
+import Repository.UserRepository;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import Logic.BankingService;
@@ -11,7 +13,8 @@ import java.io.InputStream;
 public class SignupHandler implements Handler {
 
     private final Gson gson = new Gson();
-    private final BankingService bankingService = new BankingService();
+    private final IUserRepository iUserRepository = new UserRepository();
+    private final BankingService bankingService = new BankingService(iUserRepository);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

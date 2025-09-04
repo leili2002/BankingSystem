@@ -1,8 +1,9 @@
 package Logic;
 
 import Logic.Dto.AdminLoginResult;
-import Logic.Dto.LoginFailedException;
-import Logic.Dto.AdminLogginResult;
+import Handler.Dto.LoginFailedException;
+import Logic.Dto.LoginResult;
+import Logic.Interface.IUserRepository;
 import Repository.Converter.UserConverter;
 import Repository.UserRepository;
 import Repository.*;
@@ -11,28 +12,29 @@ import java.util.List;
 
 
 public class BankingService {
-    UserConverter userConverter=new UserConverter();
-    //private IUserRepository iUserRepository;
-    UserRepository repo = new UserRepository();
-    public BankingService() {
-       // this.iUserRepository = iUserRepository;
+    UserConverter userConverter = new UserConverter();
+    private IUserRepository repo;
+
+    public BankingService(IUserRepository iUserRepository) {
+         this.repo = iUserRepository;
     }
 
     public int register(UserData newUserData) {
-       return repo.addUser(newUserData);
+        return repo.addUser(newUserData);
     }
 
-    public AdminLogginResult login(int national_id, String password)throws LoginFailedException {
+    public LoginResult login(int national_id, String password) throws LoginFailedException {
         UserData userData = repo.getUserById(national_id);
         boolean success = userData != null && (userData.getPass() == null ? password == null : userData.getPass().equals(password));
         if (!success) {
             throw new LoginFailedException("Invalid national ID or password");
         }
-        String name=userData.getName();
-        return new AdminLogginResult(national_id, true,name);
+        String name = userData.getName();
+        String accessToken = TokenUtil.generateToken(national_id, name);
+        return new LoginResult(national_id, true, name, accessToken);
     }
 
-    public   AdminLoginResult Admin_login(int id, String password)  throws LoginFailedException{
+    public AdminLoginResult Admin_login(int id, String password) throws LoginFailedException {
         boolean success = (id == 12345) && "adminsystem".equals(password);
         if (!success) {
             throw new LoginFailedException("Invalid national ID or password");

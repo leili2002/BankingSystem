@@ -12,7 +12,7 @@ public class Router {
     public Router() {
         routes.put("/login", new LoginHandler());
         routes.put("/signup", new SignupHandler());
-        routes.put("/Admin",new AdminHandler());
+        routes.put("/admin",new AdminHandler());
         // Add more handlers here, e.g., /admin, /menu, etc.
     }
 
