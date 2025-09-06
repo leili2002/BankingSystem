@@ -1,16 +1,11 @@
 package Logic;
-
-import Repository.Converter.AccountConverter;
 import Logic.Interface.IAccountRepository;
-import Repository.AccountModel;
-
 import java.util.List;
 import java.util.UUID;
 
 public class AccountService {
 
-
-    private IAccountRepository iAccountRepository;
+    private final IAccountRepository iAccountRepository;
 
 
     public AccountService(IAccountRepository iAccountRepository) {
@@ -55,8 +50,7 @@ public class AccountService {
         UserData userData = iAccountRepository.getUserData(nationalId);
        int balance = 0;
        AccountData newAccount = new AccountData(
-               UUID.randomUUID(),          // UUID
-               0,               // id (auto, so can be 0 or ignored if constructor handles it)
+               // id (auto, so can be 0 or ignored if constructor handles it)
                userData.getName(),
                userData.getLastName(),
                accountType,

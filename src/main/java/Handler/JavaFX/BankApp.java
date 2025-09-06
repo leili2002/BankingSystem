@@ -1,9 +1,9 @@
 package Handler.JavaFX;
 
+import Handler.Dto.LoginFailedException;
 import Logic.AccountData;
 import Logic.AccountService;
 import Logic.BankingService;
-import Handler.Dto.LoginFailedException;
 import Logic.Dto.LoginResult;
 import Logic.Interface.IUserRepository;
 import Logic.UserData;

@@ -15,8 +15,8 @@ import java.io.InputStream;
 public class LoginHandler implements Handler {
 
     private final Gson gson = new Gson();
-    private final IUserRepository iUserRepository = new UserRepository();
-    private final BankingService bankingService = new BankingService(iUserRepository);
+    private final IUserRepository realRepo = new UserRepository();
+    private final BankingService bankingService = new BankingService(realRepo);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

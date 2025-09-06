@@ -211,7 +211,7 @@ public class AccountRepository implements IAccountRepository {
                     Account_list.add(new AccountModel(
                             UUID.fromString(rs.getString("serial")),
                             rs.getInt("id"),
-                            rs.getString("getName"),
+                            rs.getString("name"),
                             rs.getString("lastname"),
                             rs.getString("type"),
                             rs.getFloat("balance")

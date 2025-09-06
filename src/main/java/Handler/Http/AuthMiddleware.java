@@ -23,12 +23,17 @@ public class AuthMiddleware implements Handler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+        System.out.println("DEBUG: Authorization header = " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("DEBUG: Missing or invalid Authorization header");
             unauthorized(exchange, "Missing or invalid Authorization header");
             return;
         }
 
         String token = authHeader.substring(7); // remove "Bearer "
+        System.out.println("DEBUG: Token received = [" + token + "]");
+
         try {
             // ✅ Correct parsing for JJWT 0.11.x+
             Claims claims = Jwts.parser()       // use parserBuilder()
@@ -37,16 +42,30 @@ public class AuthMiddleware implements Handler {
                     .parseClaimsJws(token)            // parse the token
                     .getBody();                       // extract claims
 
+            // Debug print all claims
+            claims.forEach((k, v) -> System.out.println("DEBUG: Claim -> " + k + ": " + v));
+
             // Optionally, store claims in the exchange for later use
             exchange.setAttribute("claims", claims);
 
             // Token valid → continue to actual handler
             next.handle(exchange);
 
+        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
+            System.out.println("DEBUG: Token expired!");
+            unauthorized(exchange, "Token expired");
+        } catch (io.jsonwebtoken.SignatureException ex) {
+            System.out.println("DEBUG: Invalid token signature!");
+            unauthorized(exchange, "Invalid token signature");
+        } catch (io.jsonwebtoken.MalformedJwtException ex) {
+            System.out.println("DEBUG: Malformed token!");
+            unauthorized(exchange, "Malformed token");
         } catch (Exception e) {
+            System.out.println("DEBUG: Other token parsing error: " + e.getMessage());
             unauthorized(exchange, "Invalid or expired token");
         }
     }
+
 
     private void unauthorized(HttpExchange exchange, String message) throws IOException {
         String response = "{\"error\":\"" + message + "\"}";

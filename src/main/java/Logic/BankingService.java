@@ -1,11 +1,10 @@
 package Logic;
 
-import Logic.Dto.AdminLoginResult;
 import Handler.Dto.LoginFailedException;
+import Logic.Dto.AdminLoginResult;
 import Logic.Dto.LoginResult;
 import Logic.Interface.IUserRepository;
 import Repository.Converter.UserConverter;
-import Repository.UserRepository;
 import Repository.*;
 
 import java.util.List;
@@ -13,10 +12,10 @@ import java.util.List;
 
 public class BankingService {
     UserConverter userConverter = new UserConverter();
-    private IUserRepository repo;
+    private final IUserRepository repo;
 
-    public BankingService(IUserRepository iUserRepository) {
-         this.repo = iUserRepository;
+    public BankingService(IUserRepository realRepo) {
+         this.repo = realRepo;
     }
 
     public int register(UserData newUserData) {

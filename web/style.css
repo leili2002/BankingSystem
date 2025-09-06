@@ -19,6 +19,9 @@ body {
     width: 400px;
     text-align: center;
 }
+/* creat account
+
+ */
 
 /* Headings */
 h1, h2 {
@@ -52,3 +55,26 @@ input[type="password"] {
     margin: 5px 0 15px 0;
     border: 1px solid #ccc;
     border-radius: 6px;}
+/* Accounts table styling */
+#accounts-table {
+    border-collapse: collapse; /* Merge borders */
+    width: 100%;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+#accounts-table th,
+#accounts-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+#accounts-table th {
+    background-color: #f2f2f2; /* Light gray for headers */
+    color: #333;
+}
+
+#accounts-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Stripe even rows */
+}
+

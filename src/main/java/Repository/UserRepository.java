@@ -1,7 +1,6 @@
 package Repository;
 
 import DataBaseConnection.DatabaseConnection;
-//import Logic.Interface.IUserRepository;
 import Logic.Interface.IUserRepository;
 import Logic.UserData;
 
@@ -48,24 +47,29 @@ public class UserRepository implements IUserRepository {
     }
 
     public UserData getUserById(int national_id) {
-        String sql = "SELECT * FROM Users WHERE national_id= ?";
+        String sql = "SELECT * FROM Users WHERE national_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, national_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new UserData(
-                        rs.getInt("id"),
-                        rs.getString("getName"),
-                        rs.getString("lastname"),
-                        rs.getString("password")
-                );
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new UserData(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("lastname"),
+                            rs.getString("password")
+                    );
+                }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 
     public List<UserModel> getAllUsers() {
         List<UserModel> userModelList = new ArrayList<>();

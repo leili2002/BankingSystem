@@ -13,6 +13,8 @@ public class Router {
         routes.put("/login", new LoginHandler());
         routes.put("/signup", new SignupHandler());
         routes.put("/admin",new AdminHandler());
+        routes.put("/accounts",new AuthMiddleware(new AccountsHandler()));
+        routes.put("/creataccounts",new AuthMiddleware(new CreatAccountsHandler()));
         // Add more handlers here, e.g., /admin, /menu, etc.
     }
 

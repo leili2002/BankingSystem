@@ -26,6 +26,18 @@
     <button onclick="submitSignUp()">Submit</button>
     <button onclick="backToMain()">Back</button>
   </div>
+  <!--  creat account form -->
+  <div  id="form-container" style="display:none;">>
+    <h2>Create Account</h2>
+
+    <input type="text" id="name" placeholder="Enter Name" required>
+    <input type="text" id="lastname" placeholder="Enter Last Name" required>
+    <input type="text" id="type" placeholder="Enter Account Type" required>
+    <input type="number" id="balance" placeholder="Enter Balance" step="0.01" required>
+
+    <button onclick="submitAccount()">Create Account</button>
+    <div id="responses" class="message"></div>
+  </div>
 
   <!-- Login form -->
   <div id="login-form" style="display:none;">
@@ -42,9 +54,25 @@
     <button id="get-accounts-btn" onclick="getAccounts()">Existing Accounts</button>
     <button id="add-account-btn" onclick="showAddAccount()">Add New Account</button>
     <button id="logout-btn" onclick="logout()">Log Out</button>
-    <div id="dashboard-response"></div>
-  </div>
 
+    <!-- Table to show accounts -->
+    <div id="dashboard-response">
+      <table id="accounts-table" border="1" style="width:100%; text-align:left; display:none;">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Last Name</th>
+          <th>Type</th>
+          <th>Balance</th>
+        </tr>
+        </thead>
+        <tbody id="accounts-tbody">
+        <!-- Rows will be inserted here dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- Response area -->
   <div id="response-box">
@@ -81,22 +109,25 @@
     document.getElementById("response").textContent = "";
   };
   function showDashboard(username) {
-    // Hide login and signup forms
     document.getElementById("login-form").style.display = "none";
     document.getElementById("signup-form").style.display = "none";
     document.getElementById("main-menu").style.display = "none";
-
-    // Show the dashboard
     document.getElementById("dashboard").style.display = "block";
-
-    // Update welcome text
     document.getElementById("welcome-text").textContent = `Welcome, ${username}!`;
-
-    // Clear any previous messages
     document.getElementById("dashboard-response").textContent = "";
     document.getElementById("response").textContent = "";
+    // Hide accounts table initially
+    document.getElementById("accounts-table").style.display = "none";
+  }
+  function showAddAccount() {
+    document.getElementById("create-account-form").style.display = "block";
+    document.getElementById("accounts-table").style.display = "none"; // hide accounts table
   }
 
+  function showAccounts() {
+    document.getElementById("accounts-table").style.display = "table";
+    document.getElementById("create-account-form").style.display = "none"; // hide create account form
+  }
 
 </script>
 </body>

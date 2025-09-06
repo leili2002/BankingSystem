@@ -20,8 +20,6 @@ public class AccountConverter {
 
     public AccountData toData(AccountModel entity) {
         return new AccountData(
-                entity.getUuid(),
-                entity.getId(),
                 entity.get_Name(),
                 entity.getLastname(),
                 entity.gettype(),

@@ -5,9 +5,6 @@ public class LoginRequest {
     public int national_id;
     public String password;
 
-    // Default constructor (required for Gson)
-    public LoginRequest() {}
-
     // Optional: constructor for easier testing
     public LoginRequest(int national_id, String password) {
         this.national_id = national_id;

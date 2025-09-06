@@ -1,9 +1,9 @@
 package Handler.Terminal;
 
+import Handler.Dto.LoginFailedException;
 import Logic.AccountData;
 import Logic.BankingService;
 import Logic.Dto.AdminLoginResult;
-import Handler.Dto.LoginFailedException;
 import Logic.UserData;
 import Logic.AccountService;
 

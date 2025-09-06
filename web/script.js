@@ -1,144 +1,232 @@
 const API_BASE = "http://localhost:8080";
 
-// Show Sign Up form
-function showSignUp() {
-    document.getElementById("main-menu").style.display = "none";
-    document.getElementById("signup-form").style.display = "block";
-}
-
-// Back to main menu
-function backToMain() {
-    document.getElementById("signup-form").style.display = "none";
-    document.getElementById("main-menu").style.display = "block";
-    document.getElementById("response").textContent = "";
-}
-
-// Submit Sign Up form
-async function submitSignUp() {
-    const national_id = document.getElementById("signup-id").value.trim();
-    const name = document.getElementById("signup-name").value.trim();
-    const lastname = document.getElementById("signup-lastname").value.trim();
-    const password = document.getElementById("signup-password").value.trim();
-
-    if (!national_id || !name || !lastname || !password) {
-        document.getElementById("response").textContent = "❌ Please fill all fields.";
-        return;
-    }
-// make json to send server
-    const payload = {
-        national_id: parseInt(national_id),
-        name: name,
-        lastname: lastname,
-        password: password
+document.addEventListener("DOMContentLoaded", () => {
+    // Helper functions
+    const show = (id) => document.getElementById(id).style.display = "block";
+    const hide = (id) => document.getElementById(id).style.display = "none";
+    const clearResponse = () => {
+        const resp = document.getElementById("response");
+        if (resp) resp.textContent = "";
     };
-// send and get a response from server (response is  answer of server)
-    try {
-        const response = await fetch(API_BASE + "/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
 
-        const text = await response.text();
-        document.getElementById("response").textContent = text;
-    } catch (error) {
-        document.getElementById("response").textContent = "Error: " + error.message;
-    }
-}
-
-
-//login form
-async function submitLogin() {
-    const national_id = parseInt(document.getElementById("login-id").value.trim(), 10);
-    const password = document.getElementById("login-password").value.trim();
-
-    if (isNaN(national_id) || !password) {
-        document.getElementById("response").textContent = "❌ Please enter a valid ID and password.";
-        return;
+    // ======= Navigation =======
+    function showSignUp() {
+        hide("main-menu");
+        hide("login-form");
+        show("signup-form");
+        clearResponse();
     }
 
-    const payload = { national_id, password };
-    console.log("Sending payload to server:", payload);
+    function showLogin() {
+        hide("main-menu");
+        hide("signup-form");
+        show("login-form");
+        clearResponse();
+    }
 
-    try {
-        const response = await fetch(API_BASE + "/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+    function backToMain() {
+        hide("signup-form");
+        hide("login-form");
+        hide("dashboard");
+        hide("create-account-form");
+        hide("accounts-table");
+        show("main-menu");
+        clearResponse();
+    }
 
-        const contentType = response.headers.get("Content-Type") || "";
-        const data = contentType.includes("application/json")
-            ? await response.json()
-            : await response.text();
+    function showDashboard(username) {
+        hide("signup-form");
+        hide("login-form");
+        hide("main-menu");
+        show("dashboard");
+        document.getElementById("welcome-text").textContent = `Welcome, ${username}!`;
+        document.getElementById("dashboard-response").textContent = "";
+        hide("accounts-table");
+        hide("create-account-form");
+    }
 
-        // Success based on HTTP status code
-        if (response.status === 200) {
-            // Server should return { token, name }
-            localStorage.setItem("jwt", data.token);
-            alert("Login successful!");
-            // Hide login form, show dashboard
+    function showAddAccount() {
+        show("create-account-form");
+        hide("accounts-table");
+        document.getElementById("dashboard-response").textContent = "";
+    }
 
-            // Clear login fields
-            document.getElementById("login-id").value = "";
-            document.getElementById("login-password").value = "";
+    // ======= Sign Up =======
+    async function submitSignUp() {
+        const national_id = document.getElementById("signup-id").value.trim();
+        const name = document.getElementById("signup-name").value.trim();
+        const lastname = document.getElementById("signup-lastname").value.trim();
+        const password = document.getElementById("signup-password").value.trim();
 
-            // Show dashboard using your existing function
-            showDashboard(data.name);
-            // Store user info
-            window.userName = data.name;
-            // Update welcome message
-            // document.getElementById("welcome-text").textContent = `Welcome, ${window.userName}!`;
-
-        } else if (response.status === 400) {
-            document.getElementById("response").textContent = "❌ Bad request. Please check your input.";
-
-        } else if (response.status === 401) {
-            document.getElementById("response").textContent = "❌ Unauthorized. Wrong ID or password.";
-
-        } else {
-            document.getElementById("response").textContent = `❌ Login failed (HTTP ${response.status})`;
+        if (!national_id || !name || !lastname || !password) {
+            document.getElementById("response").textContent = "❌ Please fill all fields.";
+            return;
         }
 
-        console.log("Server response:", data);
+        const payload = { national_id: parseInt(national_id), name, lastname, password };
 
-    } catch (error) {
-        document.getElementById("response").textContent = "Network error: " + error.message;
-        console.error("Login error:", error);
+        try {
+            const res = await fetch(`${API_BASE}/signup`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const text = await res.text();
+            document.getElementById("response").textContent = text;
+
+            if (res.ok) {
+                // Clear fields
+                document.getElementById("signup-id").value = "";
+                document.getElementById("signup-name").value = "";
+                document.getElementById("signup-lastname").value = "";
+                document.getElementById("signup-password").value = "";
+            }
+
+        } catch (err) {
+            document.getElementById("response").textContent = "Network error: " + err.message;
+        }
     }
-}
 
-// account menu
-//
-//     try {
-//         const token = localStorage.getItem("jwt");
-//         if (!token) {
-//             document.getElementById("dashboard-response").textContent = "❌ No token found. Please login first.";
-//             return;
-//         }
-//
-//         const response = await fetch("http://localhost:8080/account-menu", {
-//             method: "GET",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "Authorization": "Bearer " + token
-//             }
-//         });
-//
-//         const contentType = response.headers.get("Content-Type") || "";
-//         const data = contentType.includes("application/json")
-//             ? await response.json()
-//             : await response.text();
-//
-//         if (response.status === 200) {
-//             document.getElementById("dashboard-response").textContent = `✅ Success: ${JSON.stringify(data)}`;
-//         } else if (response.status === 401) {
-//             document.getElementById("dashboard-response").textContent = "❌ Unauthorized. Token invalid or expired.";
-//         } else {
-//             document.getElementById("dashboard-response").textContent = `❌ Failed (HTTP ${response.status}): ${JSON.stringify(data)}`;
-//         }
-//     } catch (error) {
-//         document.getElementById("dashboard-response").textContent = "Network error: " + error.message;
-//         console.error(error);
-//     }
-// });
+    // ======= Login =======
+    async function submitLogin() {
+        const national_id = parseInt(document.getElementById("login-id").value.trim(), 10);
+        const password = document.getElementById("login-password").value.trim();
+
+        if (isNaN(national_id) || !password) {
+            document.getElementById("response").textContent = "❌ Enter a valid ID and password.";
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ national_id, password })
+            });
+
+            const contentType = res.headers.get("Content-Type") || "";
+            const data = contentType.includes("application/json") ? await res.json() : await res.text();
+
+            if (res.ok) {
+                localStorage.setItem("jwt", data.token);
+                alert("Login successful!");
+                showDashboard(data.name);
+                document.getElementById("login-id").value = "";
+                document.getElementById("login-password").value = "";
+            } else if (res.status === 400) {
+                document.getElementById("response").textContent = "❌ Bad request.";
+            } else if (res.status === 401) {
+                document.getElementById("response").textContent = "❌ Unauthorized. Wrong ID or password.";
+            } else {
+                document.getElementById("response").textContent = `❌ Login failed (HTTP ${res.status})`;
+            }
+
+        } catch (err) {
+            document.getElementById("response").textContent = "Network error: " + err.message;
+        }
+    }
+
+    // ======= Create Account =======
+    async function submitAccount() {
+        const data = {
+            name: document.getElementById("name").value.trim(),
+            lastname: document.getElementById("lastname").value.trim(),
+            type: document.getElementById("type").value.trim(),
+            balance: parseFloat(document.getElementById("balance").value)
+        };
+
+        if (!data.name || !data.lastname || !data.type || isNaN(data.balance)) {
+            document.getElementById("response").textContent = "❌ Fill all account fields correctly.";
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("jwt");
+            const res = await fetch(`${API_BASE}/account/signup`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const text = await res.text();
+            document.getElementById("response").textContent = text;
+
+        } catch (err) {
+            document.getElementById("response").textContent = "Error: " + err.message;
+        }
+    }
+
+    // ======= Fetch Accounts =======
+    async function getAccounts() {
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            document.getElementById("dashboard-response").textContent = "❌ You are not logged in.";
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/accounts`, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const accounts = await res.json();
+                const tbody = document.getElementById("accounts-tbody");
+                tbody.innerHTML = "";
+
+                if (accounts.length === 0) {
+                    document.getElementById("dashboard-response").textContent = "No accounts found.";
+                    hide("accounts-table");
+                    return;
+                }
+
+                accounts.forEach(acc => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${acc.id}</td>
+                        <td>${acc.name}</td>
+                        <td>${acc.lastname}</td>
+                        <td>${acc.type}</td>
+                        <td>${acc.balance}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                show("accounts-table");
+                document.getElementById("dashboard-response").textContent = "";
+
+            } else if (res.status === 401) {
+                document.getElementById("dashboard-response").textContent = "❌ Unauthorized. Log in again.";
+            } else {
+                document.getElementById("dashboard-response").textContent = `❌ Failed (HTTP ${res.status})`;
+            }
+
+        } catch (err) {
+            document.getElementById("dashboard-response").textContent = "Network error: " + err.message;
+        }
+    }
+
+    // ======= Logout =======
+    function logout() {
+        localStorage.removeItem("jwt");
+        backToMain();
+        alert("You have been logged out.");
+    }
+
+    // ======= Expose globally =======
+    window.showSignUp = showSignUp;
+    window.showLogin = showLogin;
+    window.backToMain = backToMain;
+    window.submitSignUp = submitSignUp;
+    window.submitLogin = submitLogin;
+    window.showDashboard = showDashboard;
+    window.showAddAccount = showAddAccount;
+    window.submitAccount = submitAccount;
+    window.getAccounts = getAccounts;
+    window.logout = logout;
+});

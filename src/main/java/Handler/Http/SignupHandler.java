@@ -9,6 +9,7 @@ import Logic.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class SignupHandler implements Handler {
 
@@ -24,22 +25,30 @@ public class SignupHandler implements Handler {
         }
 
         InputStream is = exchange.getRequestBody();
-        String body = new String(is.readAllBytes());
+        String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         UserData newUser = gson.fromJson(body, UserData.class);
 
-        int result = bankingService.register(newUser);
-        String responseText = (result == 1) ? "Sign-up successful" : "Sign-up failed";
-        if (result != 1) {
-            String error = "{\"error\":\"Invalid JSON format\"}";
-            exchange.getResponseHeaders().set("Content-Type", "text/plain");
-            exchange.sendResponseHeaders(400, responseText.getBytes().length);
-            exchange.getResponseBody().write(responseText.getBytes());
-            exchange.getResponseBody().close();
-        } else {
-            exchange.getResponseHeaders().set("Content-Type", "text/plain");
-            exchange.sendResponseHeaders(400, responseText.getBytes().length);
-            exchange.getResponseBody().write(responseText.getBytes());
-            exchange.getResponseBody().close();
+        String responseText;
+        int statusCode;
+
+        try {
+            int result = bankingService.register(newUser);
+            if (result == 1) {
+                responseText = "{\"message\":\"Sign-up successful\"}";
+                statusCode = 200;
+            } else {
+                responseText = "{\"error\":\"Sign-up failed\"}";
+                statusCode = 400;
+            }
+        } catch (Exception e) {
+            responseText = "{\"error\":\"" + e.getMessage() + "\"}";
+            statusCode = 400;
         }
+
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        byte[] responseBytes = responseText.getBytes(StandardCharsets.UTF_8);
+        exchange.sendResponseHeaders(statusCode, responseBytes.length);
+        exchange.getResponseBody().write(responseBytes);
+        exchange.getResponseBody().close();
     }
 }
